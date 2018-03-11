@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	serverAddr  = flag.String("l", ":8080", "server's port")
+	serverAddr  = flag.String("l", ":8080", "server's listening Address")
 	swaggerFile = flag.String("f",
 		"http://petstore.swagger.io/v2/swagger.json",
 		"swagger url or local file path")
@@ -44,6 +44,11 @@ func serve() {
 		fmt.Printf("Using default local swagger file %s\n", *swaggerFile)
 	} else {
 		fmt.Printf("Using default online swagger file %s\n", *swaggerFile)
+	}
+	if *enableTopbar {
+		fmt.Println("Topbar enabled")
+	} else {
+		fmt.Println("Topbar disabled")
 	}
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(*serverAddr, nil))
