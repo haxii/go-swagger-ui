@@ -15,6 +15,13 @@ import (
 )
 
 var (
+	// Build of git, got by LDFLAGS on build
+	Build = "-unknown-"
+	// Version of git, got by LDFLAGS on build
+	Version = "-unknown-"
+)
+
+var (
 	_ = flag.String("s", daemon.UsageDefaultName, daemon.UsageMessage)
 
 	serverAddr  = flag.String("l", ":8080", "server's listening Address")
@@ -55,6 +62,7 @@ func serve() {
 	} else {
 		fmt.Println("Topbar disabled")
 	}
+	fmt.Println("Swagger UI version", Version, ", build", Build)
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(*serverAddr, nil))
 }
