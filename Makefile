@@ -10,3 +10,29 @@ static:
 	done
 	echo '}' >> ./static/static.go
 	gofmt -w ./static/static.go
+
+
+# `make clean` cleans up everything
+.PHONY: clean
+clean:
+	rm -rf bin release swaggerui-*.tar.gz
+
+################################################################################
+## Below are commands for shipping distributable binaries for each platfomr.  ##
+################################################################################
+PLATFORMS := windows/386  windows/amd64 linux/386 linux/amd64 darwin/amd64
+release: $(PLATFORMS)
+.PHONY: release $(PLATFORMS)
+
+# Handy variables to pull OS and arch from $PLATFORMS.
+temp = $(subst /, ,$@)
+os   = $(word 1, $(temp))
+arch = $(word 2, $(temp))
+
+$(PLATFORMS):
+	mkdir -p release/swaggerui-$(VERSION)-$(os)-$(arch)
+	cp -r README.md release/swaggerui-$(VERSION)-$(os)-$(arch)/
+	GOOS=$(os) GOARCH=$(arch) \
+		go build $(LDFLAGS) -v -i -o bin/swaggerui ./swagger.go
+	cp bin/swaggerui* release/swaggerui-$(VERSION)-$(os)-$(arch)/
+	cd release; tar -czvf ../swaggerui-$(VERSION)-$(os)-$(arch).tar.gz swaggerui-$(VERSION)-$(os)-$(arch)

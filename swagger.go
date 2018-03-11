@@ -10,10 +10,13 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/haxii/daemon"
 	"github.com/haxii/go-swagger-ui/static"
 )
 
 var (
+	_ = flag.String("s", daemon.UsageDefaultName, daemon.UsageMessage)
+
 	serverAddr  = flag.String("l", ":8080", "server's listening Address")
 	swaggerFile = flag.String("f",
 		"http://petstore.swagger.io/v2/swagger.json",
@@ -27,7 +30,9 @@ var (
 const queryFileKey string = "config"
 
 func main() {
-	serve()
+	daemon.Make("-s",
+		"swaggerui",
+		"Swagger UI service").Run(serve)
 }
 
 func serve() {
