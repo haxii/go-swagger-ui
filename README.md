@@ -4,6 +4,7 @@ Cross-platform [Swagger UI](https://swagger.io/swagger-ui/) built with golang wi
 a fat binary, which can help you serve your swagger documentation with only one command.
 
 ## Usage
+Download the latest release for your system at [release](https://github.com/haxii/go-swagger-ui/releases) page.
 
 Start a swagger documentation server on port `8000` for `/path/to/your/swagger.json`:
 
