@@ -1,2 +1,3 @@
-# go-swagger-ui
-golang hosted wagger ui 3.x
+# go Swagger UI
+
+golang hosted swagger UI 3.x with only a fat binary
