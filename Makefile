@@ -6,8 +6,7 @@ LDFLAGS := -ldflags "-X main.Build=$(BUILD) -X main.Version=$(VERSION)"
 
 .PHONY: static
 static:
-	echo 'package st
-	atic' > ./static/static.go
+	echo 'package static' > ./static/static.go
 	echo '// Files static in-memory cache of swagger UI dist static files' >> ./static/static.go
 	echo '// change by makefile, do NOT edit directly' >> ./static/static.go
 	echo 'var Files = map[string][]byte{' >> ./static/static.go

@@ -28,13 +28,17 @@ var (
 	swaggerFile = flag.String("f",
 		"http://petstore.swagger.io/v2/swagger.json",
 		"swagger url or local file path")
-	enableTopbar = flag.Bool("b", false, "enable the topbar")
+	localSwaggerDir = flag.String("d", "/swagger", "swagger files vhost dir")
+	enableTopbar    = flag.Bool("b", false, "enable the topbar")
 
 	isNativeSwaggerFile   = false
 	nativeSwaggerFileName = ""
 )
 
-const queryFileKey string = "config"
+const (
+	querySwaggerURLKey  string = "url"
+	querySwaggerFileKey string = "file"
+)
 
 func main() {
 	daemon.Make("-s",
@@ -77,6 +81,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if isNativeSwaggerFile && source == nativeSwaggerFileName {
 		http.ServeFile(w, r, *swaggerFile)
 		return
+	} else if strings.HasPrefix(source, "swagger/") {
+		// we treat path started with swagger as a direct request of a local swagger file
+		http.ServeFile(w, r, filepath.Join(*localSwaggerDir,
+			source[len("swagger/"):]))
+		return
 	}
 
 	// server the swagger UI
@@ -109,9 +118,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	// set up the index page
 	targetSwagger := *swaggerFile
-	if f := r.URL.Query().Get(queryFileKey); len(f) > 0 {
+	if f := r.URL.Query().Get(querySwaggerFileKey); len(f) > 0 {
+		// requesting a local file, join it with a `swagger/` prefix
+		targetSwagger = filepath.Join("swagger", f)
+	} else if url := r.URL.Query().Get(querySwaggerURLKey); len(url) > 0 {
 		// deal with the query swagger firstly
-		targetSwagger = f
+		targetSwagger = url
 	} else if isNativeSwaggerFile {
 		// for a native swagger file, use the filename directly
 		targetSwagger = nativeSwaggerFileName
@@ -119,7 +131,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// replace the target swagger file in index
 	indexHTML := string(staticFile)
 	indexHTML = strings.Replace(indexHTML,
-		"http://petstore.swagger.io/v2/swagger.json",
+		"https://petstore.swagger.io/v2/swagger.json",
 		targetSwagger, -1)
 	if *enableTopbar {
 		indexHTML = strings.Replace(indexHTML,
