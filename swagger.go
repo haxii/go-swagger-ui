@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -120,7 +121,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	targetSwagger := *swaggerFile
 	if f := r.URL.Query().Get(querySwaggerFileKey); len(f) > 0 {
 		// requesting a local file, join it with a `swagger/` prefix
-		targetSwagger = filepath.Join("swagger", f)
+		base, err := url.Parse("swagger/")
+		if err != nil {
+			return
+		}
+		target, err := url.Parse(f)
+		if err != nil {
+			return
+		}
+		targetSwagger = base.ResolveReference(target).String()
 	} else if url := r.URL.Query().Get(querySwaggerURLKey); len(url) > 0 {
 		// deal with the query swagger firstly
 		targetSwagger = url
