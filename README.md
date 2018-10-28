@@ -12,12 +12,17 @@ Start a swagger documentation server on port `8000` for `/path/to/your/swagger.j
 $ swaggerui -l "0.0.0.0:8000" -f "/path/to/your/swagger.json"
 ```
 
-Everyone can read your documentation on `http://your.ip.address:8000`, you can also view
-other online swagger file, such as swagger's [petstore](http://petstore.swagger.io/),
+Everyone can read your documentation on `http://your.ip.address:8000`, you can also view other online swagger file, such as swagger's [petstore](http://petstore.swagger.io/),
 by opening 
 
 ```
-http://your.ip.address:8000/?config=http://petstore.swagger.io/v2/swagger.json
+http://your.ip.address:8000/?url=http://petstore.swagger.io/v2/swagger.json
+```
+
+or serve a local swagger files folder defined with `-d` flag, such as `/swagger` as pre-defined, then you can view the `path/to/my-awesome-api.yaml` file in this folder by opening
+
+```
+http://your.ip.address:8000/?file=path/to/my-awesome-api.yaml
 ```
 
 To make it as a daemon:
@@ -27,7 +32,7 @@ $ swaggerui -s install -l "0.0.0.0:8000" -f "/path/to/your/swagger.json"
 $ swaggerui -s start
 ```
 
-which could run in background and autostart with your system.
+which could run in background and auto-start with your system.
 
 More detailed usage:
 
@@ -35,6 +40,8 @@ More detailed usage:
 Usage of swaggerui:
 
   -b    enable the topbar
+  -d string
+        swagger files vhost dir (default "/swagger")
   -f string
         swagger url or local file path (default "http://petstore.swagger.io/v2/swagger.json")
   -l string
