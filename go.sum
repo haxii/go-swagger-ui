@@ -1,0 +1,7 @@
+github.com/haxii/daemon v0.0.0-20180309090221-dd470d686e70 h1:H0bMZT6iAc8GwIsTKJrf7Ba2jrUJrHtAo7N6qTVvoJU=
+github.com/haxii/daemon v0.0.0-20180309090221-dd470d686e70/go.mod h1:ivBsVCdLC+TQzuwSdzxZzGrFWwdQMxb2AS5fbX7FxR8=
+github.com/robfig/cron v0.0.0-20180505203441-b41be1df6967/go.mod h1:JGuDeoQd7Z6yL4zQhZ3OPEVHB7fL6Ka6skscFHfmt2k=
+github.com/takama/daemon v0.0.0-20180403113744-aa76b0035d12 h1:MlOkfN9J0i50+dVLc2WzN15uxggtdN4uRUXy33mt3ik=
+github.com/takama/daemon v0.0.0-20180403113744-aa76b0035d12/go.mod h1:So5Nv647d/sgbZNAfiWtw6egowH8vNNrPXAwooWeElk=
+golang.org/x/sys v0.0.0-20181026203630-95b1ffbd15a5 h1:x6r4Jo0KNzOOzYd8lbcRsqjuqEASK6ob3auvWYM4/8U=
+golang.org/x/sys v0.0.0-20181026203630-95b1ffbd15a5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
