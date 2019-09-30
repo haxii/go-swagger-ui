@@ -5,8 +5,7 @@ MAINTAINER Zichao Li <zichao@haxii.com>
 WORKDIR /go/src/app
 COPY . .
 
-RUN mkdir -p /go/src/app/vendor/github.com/haxii/go-swagger-ui/static &&\
-    mv static/static.go /go/src/app/vendor/github.com/haxii/go-swagger-ui/static &&\
+RUN go mod download &&\
     go build -ldflags "-X main.Build=3a2cf5e -X main.Version=v3.23.11" swagger.go &&\
     mkdir -p /swagger &&\
     mv swagger /go-swagger &&\
