@@ -1,6 +1,10 @@
 FROM golang:1.12 as builder
 MAINTAINER Zichao Li <zichao@haxii.com>
 
+# Set Environment Variables
+ENV CGO_ENABLED 0
+ENV GOOS linux
+
 # build go-swagger
 WORKDIR /go/src/app
 COPY . .
