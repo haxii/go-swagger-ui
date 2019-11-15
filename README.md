@@ -25,6 +25,12 @@ or serve a local swagger files folder defined with `-d` flag, such as `/swagger`
 http://your.ip.address:8000/?file=path/to/my-awesome-api.yaml
 ```
 
+you can also replace the default API host endpoint with `host` query for local host swagger file
+
+```
+http://your.ip.address:8000/?file=path/to/my-awesome-api.yaml&host=www.new.host
+``` 
+
 To make it as a daemon:
 
 ```

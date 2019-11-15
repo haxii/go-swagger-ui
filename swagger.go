@@ -11,6 +11,10 @@ import (
 	"strconv"
 	"strings"
 
+	"gopkg.in/yaml.v2"
+
+	jsoniter "github.com/json-iterator/go"
+
 	"github.com/haxii/daemon"
 	"github.com/haxii/go-swagger-ui/static"
 )
@@ -39,6 +43,7 @@ var (
 const (
 	querySwaggerURLKey  string = "url"
 	querySwaggerFileKey string = "file"
+	querySwaggerHost    string = "host"
 )
 
 func main() {
@@ -72,6 +77,64 @@ func serve() {
 	log.Fatal(http.ListenAndServe(*serverAddr, nil))
 }
 
+func serveLocalFile(localFilePath string, w http.ResponseWriter, r *http.Request) {
+	newHost := r.URL.Query().Get("host")
+	if len(newHost) == 0 {
+		http.ServeFile(w, r, localFilePath)
+		return
+	}
+	isJSON := false
+	switch filepath.Ext(localFilePath) {
+	case ".json":
+		isJSON = true
+	case ".yaml":
+		fallthrough
+	case ".yml":
+		isJSON = false
+	default:
+		http.Error(w, "unknown swagger file: "+localFilePath, http.StatusBadRequest)
+		return
+	}
+
+	// open file
+	file, err := os.Open(localFilePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			http.Error(w, "file not exists", http.StatusNotFound)
+			return
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+	swg := new(map[string]interface{})
+	if isJSON {
+		dec := jsoniter.NewDecoder(file)
+		err = dec.Decode(swg)
+	} else {
+		dec := yaml.NewDecoder(file)
+		err = dec.Decode(swg)
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	(*swg)["host"] = newHost
+	var resp []byte
+	if isJSON {
+		resp, err = jsoniter.Marshal(swg)
+	} else {
+		resp, err = yaml.Marshal(swg)
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Cache-Control", "no-cache, max-age=0, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Write(resp)
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	source := r.URL.Path[1:]
 	if len(source) == 0 {
@@ -79,13 +142,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// serve the local file
+	localFile := ""
 	if isNativeSwaggerFile && source == nativeSwaggerFileName {
-		http.ServeFile(w, r, *swaggerFile)
-		return
+		localFile = *swaggerFile
 	} else if strings.HasPrefix(source, "swagger/") {
 		// we treat path started with swagger as a direct request of a local swagger file
-		http.ServeFile(w, r, filepath.Join(*localSwaggerDir,
-			source[len("swagger/"):]))
+		localFile = filepath.Join(*localSwaggerDir, source[len("swagger/"):])
+	}
+	if len(localFile) > 0 {
+		serveLocalFile(localFile, w, r)
 		return
 	}
 
@@ -130,6 +195,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		targetSwagger = base.ResolveReference(target).String()
+		if h := r.URL.Query().Get(querySwaggerHost); len(h) > 0 {
+			targetSwagger += "?host=" + h
+		}
 	} else if url := r.URL.Query().Get(querySwaggerURLKey); len(url) > 0 {
 		// deal with the query swagger firstly
 		targetSwagger = url
