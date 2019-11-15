@@ -10,7 +10,7 @@ WORKDIR /go/src/app
 COPY . .
 
 RUN GO111MODULE=on go mod download &&\
-    GO111MODULE=on go build -ldflags "-X main.Build=3a2cf5e -X main.Version=v3.23.11" swagger.go &&\
+    GO111MODULE=on go build -ldflags "-X main.Build=2c43385 -X main.Version=v3.24.2" swagger.go &&\
     mkdir -p /swagger &&\
     mv swagger /go-swagger &&\
     cd .. &&\
