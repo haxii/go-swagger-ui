@@ -198,9 +198,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		if h := r.URL.Query().Get(querySwaggerHost); len(h) > 0 {
 			targetSwagger += "?host=" + h
 		}
-	} else if url := r.URL.Query().Get(querySwaggerURLKey); len(url) > 0 {
+	} else if _url := r.URL.Query().Get(querySwaggerURLKey); len(_url) > 0 {
 		// deal with the query swagger firstly
-		targetSwagger = url
+		targetSwagger = _url
 	} else if isNativeSwaggerFile {
 		// for a native swagger file, use the filename directly
 		targetSwagger = nativeSwaggerFileName
